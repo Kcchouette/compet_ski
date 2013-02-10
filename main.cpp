@@ -22,7 +22,7 @@
 // Structure des pays
 struct Pays
 {
-  char codePays[3]; //codePays
+	char codePays[3]; //codePays
 	char nomPays[11]; // Nom du pays
 	int NInscrits; //nombre inscrits par nationalite
 	int NClasses; //nombre de skieur dans le classement final
@@ -35,7 +35,7 @@ struct participant //tableau de structure
 {
     int rang; //classement du participant
     char nom[21]; // Nom du participant
-    int codeNationalite; //indice du Code Nationalite
+    unsigned int codeNationalite; //indice du Code Nationalite
     float tempsRealise; //temps realise lors de la competition
     int dossard; //numéro de dossard du participant
 };
@@ -56,7 +56,7 @@ void recapitulatif(Pays nation[]);
 // Programme Principal
 int main()
 {
-    int i,j; // variables utilisées comme compteur principalement
+    unsigned int i,j; // variables utilisées comme compteur principalement
     int compteurInscrit=0; //nbre d'inscrits
     char nomInscription[21]; //nom qui sera entré
     char codeNat[3]; //codenationalité qui sera entré
@@ -88,12 +88,12 @@ int main()
 
 	while(nomInscription[0]!='*')
     {
-        for(i=0;i<compteurInscrit&&(strcmp(dataParticipant[i].nom,nomInscription)!=0);i=i+1); //Vérifer la presence du participant dans le tableau, il ne doit pas etre present
+        for(i=0; i<compteurInscrit && (strcmp(dataParticipant[i].nom,nomInscription)!=0); ++i); //Vérifer la presence du participant dans le tableau, il ne doit pas etre present
 
         if(i<compteurInscrit) // Msg erreur : participant deja enregistre
         {
-            printf("\nERREUR : Le nom %s est deja enregistre.\n",dataParticipant[i].nom);
-            i=i-1;
+            printf("\nERREUR : Le nom %s est deja enregistré.\n",dataParticipant[i].nom);
+            i--;
         }
         else // Enregistrer le nom du participant
 		{
@@ -103,7 +103,7 @@ int main()
             gets(codeNat);
 
 		do{
-				for(j=0;j<7&&(strcmp(listeNationalite[j].codePays,codeNat)!=0);j=j+1); //Vérifier le code de la nationalité parmi la liste de ceux autorisés
+				for(j=0; j<7 && (strcmp(listeNationalite[j].codePays,codeNat)!=0); ++j); //Vérifier le code de la nationalité parmi la liste de ceux autorisés
 
 				if (j>=7)//le code ne fait pas partie de la liste
 				{
@@ -132,7 +132,7 @@ int main()
 
 // -------------------------------------------------------------------
 
-	for(i=0;i<compteurInscrit;i=i+1) // Afficher les participants saisis
+	for(unsigned int k=0; k<compteurInscrit; ++k) // Afficher les participants saisis
     {
         if(i==0) // si c'est la première boucle on détaille le tableau
         {
@@ -140,8 +140,8 @@ int main()
             printf("Numero Dossard\tNom du participant\tNationalite du participant\n");
         }
 
-        printf("%-10d \t %-20s\t%-10s\n",i+1,dataParticipant[i].nom,listeNationalite[dataParticipant[i].codeNationalite].codePays);
-        dataParticipant[i].dossard=i+1;
+        printf("%-10d \t %-20s\t%-10s\n",k+1,dataParticipant[k].nom,listeNationalite[dataParticipant[k].codeNationalite].codePays);
+        dataParticipant[k].dossard = k+1;
     }
 
 	printf("\n");
@@ -158,15 +158,15 @@ int main()
     {
 		//on recherche le code entré parmi les inscrits
 
-		for(j=0;j<7&&(strcmp(listeNationalite[j].codePays,codeNat)!=0);j++); //Vérifier le code de la nationalité parmi la liste de ceux autorisés
+		for(j=0; j<7 && (strcmp(listeNationalite[j].codePays,codeNat)!=0); ++j); //Vérifier le code de la nationalité parmi la liste de ceux autorisés
 
         if (j<7)//le code appartient au tableau des nationalités
         {
             if(listeNationalite[j].NInscrits>0)
 			{    //on affiche les inscrits du meme code de nationalité
-				for(i=0;i<compteurInscrit;i++)
+				for(i=0; i<compteurInscrit; ++i)
 				{
-					if( dataParticipant[i].codeNationalite==j);
+					if(dataParticipant[i].codeNationalite == j)
 					{
 					if(i==0)
 						printf("\nCode Nationalite\tLibelle du pays\t\tNombre d'inscrits\n");
@@ -204,8 +204,8 @@ int main()
 	*/
 
 
-	int compteurArrive=0;
-	int compteurDisqual=0;
+	int compteurArrive = 0;
+	int compteurDisqual = 0;
 	int numDossard;
     int cTemps[21];
     int pDisqualifie[21];
@@ -225,16 +225,16 @@ int main()
 	indice=numDossard-1; //on retire 1 au numero de dosard pour trouver l'indice du participant dans le tableau
 
     while(numDossard!=0 && compteurInscrit!=0)
-		{
+	{
 			if(numDossard>0 && numDossard-1<=nbInscrit)
 			{
-				if(dataParticipant[indice].tempsRealise==-1.0) //verifie que le participant n'est pas encore arrivé, donc le temps d'arrive est de -1
+				if(dataParticipant[indice].tempsRealise == -1.0) //verifie que le participant n'est pas encore arrivé, donc le temps d'arrive est de -1
 				{
 					printf("\nSaisir le temps realise du skieur en secondes: \t"); //indiquer le temps du participant
 
 					scanf("%f",&(dataParticipant[indice].tempsRealise));
 
-					if((dataParticipant[indice].tempsRealise)>0.0)// si le participant n'est pas disqualifié
+					if((dataParticipant[indice].tempsRealise) > 0.0)// si le participant n'est pas disqualifié
                     {
                         compteurArrive++;
                         listeNationalite[dataParticipant[indice].codeNationalite].tempsTotal += dataParticipant[indice].tempsRealise;
@@ -243,7 +243,7 @@ int main()
                         compteurInscrit--;
                     }
 
-                    if((dataParticipant[indice].tempsRealise)==0.0)
+                    if((dataParticipant[indice].tempsRealise) == 0.0)
                     {
                         compteurDisqual++;
                         determiner_disqual(pDisqualifie,dataParticipant,listeNationalite,indice,compteurDisqual);
@@ -277,11 +277,11 @@ int main()
         }
 	}
 	compteurForfait=compteurInscrit-(compteurArrive+compteurDisqual); // compteur du nombre de skieur ayant déclaré forfait
-    for (i=0, j=compteurForfait; i<compteurInscrit, j>0 && i>0; j--) // On met dans le tableau tforfait ceux qui ont un temps = à 1.0
+    for (unsigned int k=0, l=compteurForfait; k<compteurInscrit && l>0; --l) // On met dans le tableau tforfait ceux qui ont un temps = à 1.0
     {
-        if ((dataParticipant[i].tempsRealise)==(-1.0))
+        if ((dataParticipant[k].tempsRealise)==(-1.0))
         {
-            pForfait[j]=i;
+            pForfait[l] = k;
             compteurForfait++;
         }
     }
@@ -313,34 +313,39 @@ int main()
     {
         switch(demande)
         {
-            case 'C':   system("cls");
-                        printf("\n\n\t======  CLASSEMENT FINAL  ======\n");
-                        classement(compteurArrive,dataParticipant,cTemps,listeNationalite);
-                        break;
+            case 'C':
+				system("cls");
+				printf("\n\n\t======  CLASSEMENT FINAL  ======\n");
+				classement(compteurArrive,dataParticipant,cTemps,listeNationalite);
+				break;
 
-            case 'D':   system("cls");
-                        printf("\n\n\t===   LISTE DES DISQUALIFIES   ===\n");
-                        if (compteurDisqual>0)
-                            hors_classement(dataParticipant,listeNationalite,compteurDisqual, pDisqualifie);
-                        else
-                            printf("\tAUCUN DISQUALIFIE\n");
-                        break;
+            case 'D':
+				system("cls");
+                printf("\n\n\t===   LISTE DES DISQUALIFIES   ===\n");
+				if (compteurDisqual>0)
+					hors_classement(dataParticipant,listeNationalite,compteurDisqual, pDisqualifie);
+				else
+					printf("\tAUCUN DISQUALIFIE\n");
+				break;
 
-            case 'F':   system("cls");
-                        printf("\n\n\t==   LISTE DES SKIEURS FORFAITS   ==\n");
-                        if (compteurForfait>0 )
-                            hors_classement(dataParticipant,listeNationalite,compteurForfait, pForfait);
-                        else
-                            printf("\tAUCUN FORFAIT\n");
-                        break;
+            case 'F':
+				system("cls");
+				printf("\n\n\t==   LISTE DES SKIEURS FORFAITS   ==\n");
+				if (compteurForfait>0 )
+					hors_classement(dataParticipant,listeNationalite,compteurForfait, pForfait);
+				else
+					printf("\tAUCUN FORFAIT\n");
+				break;
 
-            case 'T':   system("cls");
-                        printf ("=   TABLEAU RECAPITULATIF DES EQUIPES NATIONALES   =\n");
-                        recapitulatif(listeNationalite);
-                        break;
+            case 'T':
+				system("cls");
+				printf ("=   TABLEAU RECAPITULATIF DES EQUIPES NATIONALES   =\n");
+				recapitulatif(listeNationalite);
+				break;
 
-            default :   printf("\nVous avez sans doute fait une erreur dans le choix de votre lettre alphabetique,\n et attention, ce programme est sensible a la casse\n");
-                        break;
+            default :
+            printf("\nVous avez sans doute fait une erreur dans le choix de votre lettre alphabetique,\n et attention, ce programme est sensible a la casse\n");
+			break;
         }
         printf("\n\nAffichage des resultats, saisir : \n");
         printf("\t'C' pour afficher le classement final \n");
@@ -359,37 +364,35 @@ int main()
 // trie par temps et par nom
 void determiner_rang(int classementTemps[], participant tab[],Pays nation[],int indiceParticipant, int nbArrivee)
 {
-	    int i,j;
+	int i,j;
 
-        i=indiceParticipant;
+	i=indiceParticipant;
 
-        for (j=nbArrivee-1; (j>0 && tab[i].tempsRealise<tab[classementTemps[j]].tempsRealise) || (j>0 && tab[i].tempsRealise==tab[classementTemps[j]].tempsRealise && (strcmp (tab[i].nom, tab[classementTemps[j]].nom)<0));j--)
-        {
-            classementTemps[j+1]=classementTemps[j]; //on decale l'indice du plus grand
-        }
+	for (j=nbArrivee-1; (j>0 && tab[i].tempsRealise<tab[classementTemps[j]].tempsRealise) || (j>0 && tab[i].tempsRealise==tab[classementTemps[j]].tempsRealise && (strcmp (tab[i].nom, tab[classementTemps[j]].nom)<0));j--)
+	{
+		classementTemps[j+1]=classementTemps[j]; //on decale l'indice du plus grand
+	}
 
-        nation[tab[i].codeNationalite].NClasses++;
-        classementTemps[j+1]=i;
+	nation[tab[i].codeNationalite].NClasses++;
+	classementTemps[j+1]=i;
 
-        //Affichage du skieur
-        printf("%2d %20s %10s %5.2f\n",(indiceParticipant+1),tab[i].nom, nation[tab[i].codeNationalite].nomPays, tab[i].tempsRealise);
+	//Affichage du skieur
+	printf("%2d %20s %10s %5.2f\n",(indiceParticipant+1),tab[i].nom, nation[tab[i].codeNationalite].nomPays, tab[i].tempsRealise);
 }
 
 
 // trie par  nom
 void determiner_disqual(int participantDisqualifie[],participant tab[],Pays nation[],int indiceParticipant,int nbDisqual)
 {
-	    int i,j;
-		i=indiceParticipant;
+	int i,j;
+	i=indiceParticipant;
 
-		for (j=nbDisqual-1; j > 0 && strcmp(tab[i].nom, tab[participantDisqualifie[j]].nom); j--)
-        {
-            participantDisqualifie[j+1] = participantDisqualifie[j]; //on decale l'indice le plus grand
-        }
-        participantDisqualifie[j+1] = i;
+	for (j=nbDisqual-1; j > 0 && strcmp(tab[i].nom, tab[participantDisqualifie[j]].nom); j--)
+		participantDisqualifie[j+1] = participantDisqualifie[j]; //on decale l'indice le plus grand
+	participantDisqualifie[j+1] = i;
 
-		//Affichage du skieur
-        printf("%2d %20s %10s disqualifie\n", indiceParticipant+1, tab[i].nom, nation[tab[i].codeNationalite].nomPays);
+	//Affichage du skieur
+	printf("%2d %20s %10s disqualifie\n", indiceParticipant+1, tab[i].nom, nation[tab[i].codeNationalite].nomPays);
 }
 
 
@@ -418,7 +421,7 @@ void hors_classement(participant tab[], Pays nation[],int nb, int t[])
     for(i=0; i<nb;i++)
     {
         j=t[i];
-        printf ("%-20s %-3d %-10s\n",tab[j].nom, j+1, nation[tab[j].codeNationalite].nomPays, tab[j].tempsRealise);
+        printf ("%-20s %-3d %20s %d\n",tab[j].nom, j+1, nation[tab[j].codeNationalite].nomPays, tab[j].tempsRealise);
     }
 }
 
